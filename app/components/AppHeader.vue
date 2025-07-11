@@ -3,9 +3,9 @@ import useChats from '~/composables/useChats';
 
 const appConfig = useAppConfig();
 
-const { createChat } = useChats();
-function handleCreateChat() {
-  createChat();
+const { createChatAndNavigate } = useChats();
+async function handleCreateChat() {
+  await createChatAndNavigate();
 }
 </script>
 
