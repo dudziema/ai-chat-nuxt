@@ -2,10 +2,15 @@
 import useChats from '~/composables/useChats';
 
 const appConfig = useAppConfig();
+const emit = defineEmits(['toggle-sidebar']);
 
 const { createChatAndNavigate } = useChats();
 async function handleCreateChat() {
   await createChatAndNavigate();
+}
+
+function toggleSidebar() {
+  emit('toggle-sidebar');
 }
 </script>
 
@@ -15,6 +20,7 @@ async function handleCreateChat() {
       <UButton
         icon="i-lucide-menu"
         color="primary"
+        @click="toggleSidebar"
       />
       <UButton
         icon="i-lucide-plus"
