@@ -1,10 +1,27 @@
+<script setup lang="ts">
+import useChats from '~/composables/useChats';
+
+const appConfig = useAppConfig();
+
+const { createChat } = useChats();
+function handleCreateChat() {
+  createChat();
+}
+</script>
+
 <template>
   <UContainer class="page-container">
-    <h1 class="title">Welcome to AI Chat</h1>
-    <UButton to="/chat" class="button">Start Chatting</UButton>
+    <span class="text-2xl font-bold mb-2">
+      {{ appConfig.title }}
+    </span>
+
+    <UButton
+      class="button"
+      @click="handleCreateChat"
+      >Start Chatting</UButton
+    >
   </UContainer>
 </template>
-
 
 <style scoped>
 .page-container {

@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import useChats from '~/composables/useChats';
+
 const appConfig = useAppConfig();
+
+const { createChat } = useChats();
+function handleCreateChat() {
+  createChat();
+}
 </script>
 
 <template>
@@ -9,7 +16,12 @@ const appConfig = useAppConfig();
         icon="i-lucide-menu"
         color="primary"
       />
-      <UButton icon="i-lucide-plus"> New Chat </UButton>
+      <UButton
+        icon="i-lucide-plus"
+        @click="handleCreateChat"
+      >
+        New Chat
+      </UButton>
     </div>
     <div class="header-title">
       {{ appConfig.title }}
