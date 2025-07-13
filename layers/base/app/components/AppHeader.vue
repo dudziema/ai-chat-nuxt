@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useChats from '~/composables/useChats';
+import useChats from '../../../chat/app/composables/useChats';
 
 const appConfig = useAppConfig();
 const emit = defineEmits(['toggle-sidebar']);
