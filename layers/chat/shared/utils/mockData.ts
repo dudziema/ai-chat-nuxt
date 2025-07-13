@@ -37,7 +37,7 @@ const MOCK_MESSAGES: ChatMessage[] = [
 
 // Mock data for initial chat
 const MOCK_CHAT: Chat = {
-  id: '1',
+  id: uuidv4(),
   title: 'Nuxt.js project help',
   messages: [...MOCK_MESSAGES],
   projectId: '1',
@@ -46,7 +46,7 @@ const MOCK_CHAT: Chat = {
 };
 
 const MOCK_PROJECT: Project = {
-  id: '1',
+  id: uuidv4(),
   name: 'Nuxt.js Project'
 };
 

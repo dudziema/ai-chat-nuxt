@@ -2,6 +2,8 @@ export interface ChatMessage {
   id: string;
   content: string;
   role: 'user' | 'assistant';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Chat {
