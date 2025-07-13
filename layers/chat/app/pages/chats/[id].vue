@@ -1,5 +1,13 @@
 <script setup lang="ts">
-const { chat, messages, sendMessage } = useChat();
+import type { Chat } from '~/types';
+const route = useRoute();
+const { chat: chatFromChats, messages, sendMessage } = useChat(route.params.id as string);
+
+if (!chatFromChats.value) {
+  await navigateTo('/', { replace: true });
+}
+
+const chat = computed(() => chatFromChats.value as Chat);
 
 const typing = ref(false);
 
