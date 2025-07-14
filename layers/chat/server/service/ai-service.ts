@@ -22,7 +22,8 @@ export async function generateChatTitle(model: LanguageModelV1, firstMessage: st
     messages: [
       {
         role: 'system',
-        content: 'Summarize the message in 3 or less short words.'
+        content:
+          'You are a helpful assistant that generates concise, descriptive titles for chat conversations. Generate a title that captures the essence of the conversation based on the first user message in 3 short words or less. Do not use any special characters or punctuation. The title should be clear and relevant to the topic discussed.'
       },
       {
         role: 'user',
