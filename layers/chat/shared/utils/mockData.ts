@@ -35,19 +35,20 @@ const MOCK_MESSAGES: ChatMessage[] = [
   }
 ];
 
-// Mock data for initial chat
-const MOCK_CHAT: Chat = {
+const MOCK_PROJECT: Project = {
   id: uuidv4(),
-  title: 'Nuxt.js project help',
-  messages: [...MOCK_MESSAGES],
-  projectId: '1',
+  name: 'Nuxt.js Project',
   createdAt: new Date(),
   updatedAt: new Date()
 };
 
-const MOCK_PROJECT: Project = {
+const MOCK_CHAT: Chat = {
   id: uuidv4(),
-  name: 'Nuxt.js Project'
+  title: 'Nuxt.js project help',
+  messages: [...MOCK_MESSAGES],
+  // projectId: MOCK_PROJECT.id,
+  createdAt: new Date(),
+  updatedAt: new Date()
 };
 
 export { MOCK_CHAT, MOCK_MESSAGES, MOCK_PROJECT };

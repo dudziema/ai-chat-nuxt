@@ -1,5 +1,23 @@
 export default function useChats() {
-  const chats = useState<Chat[]>('chats', () => [MOCK_CHAT]);
+  const {
+    data: chats,
+    execute,
+    status
+  } = useAsyncData<Chat[]>(
+    'chats',
+    () => {
+      return $fetch<Chat[]>('/api/chats');
+    },
+    {
+      immediate: false,
+      default: () => []
+    }
+  );
+
+  async function fetchChats() {
+    if (status.value !== 'idle') return;
+    await execute();
+  }
 
   async function createChatAndNavigate(options: { projectId?: string } = {}) {
     const chat = createChat(options);
@@ -34,6 +52,7 @@ export default function useChats() {
     chats,
     createChat,
     createChatAndNavigate,
-    chatsInProject
+    chatsInProject,
+    fetchChats
   };
 }
