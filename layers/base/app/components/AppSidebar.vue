@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import useProjects from '../../../chat/app/composables/useProjects';
-import useChats from '../../../chat/app/composables/useChats';
 import type { NavigationMenuItem } from '@nuxt/ui';
-import type { Project, Chat } from '../../../chat/app/types';
 
 defineProps<{
   isOpen: boolean;
