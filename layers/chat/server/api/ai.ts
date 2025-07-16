@@ -1,5 +1,6 @@
-import { createOllamaModel, generateChatResponse } from '../services/ai-service';
+import { createOllamaModel, generateChatResponse } from '../service/ai-service';
 import { ChatMessageSchema } from '../schemas';
+import type { LanguageModelV1 } from 'ai';
 
 export default defineEventHandler(async (event) => {
   const { success, data } = await readValidatedBody(event, ChatMessageSchema.safeParse);
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
   const ollamaModel = createOllamaModel();
 
-  const response = await generateChatResponse(ollamaModel, messages);
+  const response = await generateChatResponse(ollamaModel as LanguageModelV1, messages);
 
   return {
     id: messages.length.toString(),
