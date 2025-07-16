@@ -36,7 +36,7 @@ export async function generateChatTitle(model: LanguageModelV1, firstMessage: st
 }
 
 export async function streamChatResponse(model: LanguageModelV1, messages: Message[]) {
-  if (!Array.isArray(message) || messages.length === 0) {
+  if (!Array.isArray(messages) || messages.length === 0) {
     throw new Error('Invalid messages format');
   }
 
