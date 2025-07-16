@@ -5,7 +5,7 @@ import type { LanguageModelV1 } from 'ai';
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event);
 
-  const history = getMessagesByChatId(id);
+  const history = await getMessagesByChatId(id);
   const ollamaModel = createOllamaModel();
 
   const reply = await generateChatResponse(ollamaModel as LanguageModelV1, history);

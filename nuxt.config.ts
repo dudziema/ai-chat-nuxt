@@ -5,5 +5,13 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint'],
   future: {
     compatibilityVersion: 4
+  },
+  nitro: {
+    storage: {
+      db: {
+        driver: 'fs',
+        base: './.data'
+      }
+    }
   }
 });
