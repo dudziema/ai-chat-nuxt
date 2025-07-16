@@ -1,16 +1,24 @@
-import { createOllamaModel, generateChatResponse } from '../service/ai-service';
+import { createOllamaModel, generateChatResponse } from '../services/ai-service';
+import { ChatMessageSchema } from '../schemas';
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { messages } = body;
+  const { success, data } = await readValidatedBody(event, ChatMessageSchema.safeParse);
 
-  const id = messages.length.toString();
+  if (!success) {
+    return 400;
+  }
+
+  const { messages } = data as {
+    messages: ChatMessage[];
+    chatId: string;
+  };
+
   const ollamaModel = createOllamaModel();
 
   const response = await generateChatResponse(ollamaModel, messages);
 
   return {
-    id,
+    id: messages.length.toString(),
     role: 'assistant',
     content: response
   };
