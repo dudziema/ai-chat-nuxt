@@ -13,5 +13,10 @@ export default defineNuxtConfig({
         base: './.data'
       }
     }
+  },
+  routeRules: {
+    '/': {
+      prerender: true
+    }
   }
 });
