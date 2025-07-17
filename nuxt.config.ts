@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', '@nuxt/image'],
   future: {
     compatibilityVersion: 4
   },
@@ -12,6 +12,11 @@ export default defineNuxtConfig({
         driver: 'fs',
         base: './.data'
       }
+    }
+  },
+  routeRules: {
+    '/': {
+      prerender: true
     }
   }
 });
