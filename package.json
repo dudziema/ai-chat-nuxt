@@ -12,6 +12,9 @@
     "postinstall": "nuxt prepare",
     "prepare": "husky"
   },
+  "prisma": {
+    "seed": "pnpm dlx tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@nuxt/eslint": "1.5.2",
     "@nuxt/image": "1.10.0",
@@ -30,6 +33,7 @@
   },
   "devDependencies": {
     "@nuxtjs/mdc": "^0.17.0",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "tsx": "^4.20.3"
   }
 }
