@@ -5,7 +5,7 @@ export const useAuth = () => {
     await clear();
     await navigateTo('/login');
   };
-  const isAuthenticated = computed(() => loggedIn.value);
+  const isAuthenticated = computed(() => loggedIn.value && session.value?.databeseUserId !== undefined);
   const userName = computed(() => (user.value as GithubUser)?.name ?? (user.value as GithubUser)?.email ?? 'User');
   const userAvatar = computed(() => (user.value as GithubUser)?.avatar ?? null);
   const userEmail = computed(() => (user.value as GithubUser)?.email ?? null);
