@@ -76,7 +76,10 @@ function closeAssignModal() {
             }"
           >
             <div class="message-content">
-              <MarkdownRenderer :content="message.content" />
+              <MarkdownRenderer
+                :cache-key="message.id"
+                :content="message.content"
+              />
             </div>
           </div>
 

@@ -1,47 +1,43 @@
-import { v4 as uuidv4 } from 'uuid';
-
-const projects: Project[] = [MOCK_PROJECT];
-
-export function getAllProjects(): Project[] {
-  return [...projects].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+export async function getAllProjects(): Promise<Project[]> {
+  return await prisma.project.findMany({
+    orderBy: { createdAt: 'asc' }
+  });
 }
 
-export function getProjectById(id: string): Project | null {
-  return projects.find((p) => p.id === id) || null;
+export async function getAllProjectsByUser(userId: string = '1'): Promise<Project[]> {
+  return await prisma.project.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'asc' }
+  });
 }
 
-export async function createProject(data: { name: string }): Promise<Project> {
-  const now = new Date();
-  const newProject: Project = {
-    id: uuidv4(),
-    name: data.name || 'New Project',
-    createdAt: now,
-    updatedAt: now
-  };
-  projects.push(newProject);
-  return newProject;
+export async function getProjectById(id: string): Promise<Project | null> {
+  return await prisma.project.findFirst({
+    where: { id }
+  });
+}
+
+export async function createProject(data: { name: string; userId?: string }): Promise<Project> {
+  return await prisma.project.create({
+    data: {
+      name: data.name,
+      userId: data.userId || '1'
+    }
+  });
 }
 
 export async function updateProject(id: string, data: { name: string }): Promise<Project | null> {
-  const projectIndex = projects.findIndex((p) => p.id === id);
-  if (projectIndex === -1) return null;
-  const project = projects[projectIndex];
-  if (!project) return null;
-  const updatedProject: Project = {
-    id: project.id,
-    name: data.name,
-    createdAt: project.createdAt,
-    updatedAt: new Date()
-  };
-  projects[projectIndex] = updatedProject;
-  return updatedProject;
+  return await prisma.project.update({
+    where: { id },
+    data: {
+      name: data.name,
+      updatedAt: new Date()
+    }
+  });
 }
 
-export async function deleteProject(id: string): Promise<boolean> {
-  const index = projects.findIndex((project) => project.id === id);
-  if (index !== -1) {
-    projects.splice(index, 1);
-    return true;
-  }
-  return false;
+export async function deleteProject(id: string) {
+  return await prisma.project.delete({
+    where: { id }
+  });
 }

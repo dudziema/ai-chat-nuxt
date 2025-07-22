@@ -20,5 +20,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return updateProject(id, { name: data });
+  return updateProject(id, { name: data.name });
 });
