@@ -6,7 +6,6 @@ export default function useProject(projectId: string) {
   function updateProjectInList(updatedData: Partial<Project>) {
     if (!project.value) return;
 
-    // Update the project in the projects list
     projects.value = projects.value.map((p) => (p.id === projectId ? { ...p, ...updatedData } : p));
   }
 
@@ -19,13 +18,15 @@ export default function useProject(projectId: string) {
     try {
       const response = await $fetch<Project>(`/api/projects/${projectId}`, {
         method: 'PUT',
+        headers: useRequestHeaders(['cookie']),
         body: {
           ...updatedProject
         }
       });
       updateProjectInList(response);
+      return response;
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error('Error updating project', error);
       updateProjectInList(originalProject);
     }
   }
