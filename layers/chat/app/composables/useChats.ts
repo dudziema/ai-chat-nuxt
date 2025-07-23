@@ -1,12 +1,13 @@
 export default function useChats() {
   const chats = useState<Chat[]>('chats', () => []);
   const { data, execute, status } = useFetch<Chat[]>('/api/chats', {
+    default: () => [],
     immediate: false,
-    default: () => []
+    headers: useRequestHeaders(['cookie'])
   });
 
-  async function fetchChats() {
-    if (status.value !== 'idle') return;
+  async function fetchChats(refresh = false) {
+    if (status.value !== 'idle' && !refresh) return;
     await execute();
     chats.value = data.value || [];
   }
@@ -19,42 +20,48 @@ export default function useChats() {
     await Promise.all(
       recentChats.map(async (chat) => {
         try {
-          const messages = await $fetch<Message[]>(`/api/chats/${chat.id}/messages`);
+          const messages = await $fetch<Message[]>(`/api/chats/${chat.id}/messages`, {
+            headers: useRequestHeaders(['cookie'])
+          });
 
-          const targetChat = chats.value.find((c) => c.id === chat.id);
-
+          const targetChat = chats.value.find((c) => c.id === chat.id) as ChatWithMessages | undefined;
           if (targetChat) {
             targetChat.messages = messages;
           }
         } catch (error) {
-          console.error(`Error prefetching messages for chat ${chat.id}:`, error);
+          console.error(`Failed to fetch messages for chat ${chat.id}`, error);
         }
       })
     );
   }
 
-  async function createChatAndNavigate(options: { projectId?: string } = {}) {
-    const chat = await createChat(options);
-
-    if (chat.projectId) {
-      await navigateTo(`/projects/${chat.projectId}/chats/${chat.id}`);
-    } else {
-      await navigateTo(`/chats/${chat.id}`);
-    }
-  }
-
   async function createChat(options: { projectId?: string; title?: string } = {}) {
     const newChat = await $fetch<Chat>('/api/chats', {
       method: 'POST',
+      headers: useRequestHeaders(['cookie']),
       body: {
-        projectId: options.projectId,
-        title: options.title || 'New Chat'
+        title: options.title,
+        projectId: options.projectId
       }
     });
 
     chats.value.push(newChat);
 
     return newChat;
+  }
+
+  async function createChatAndNavigate(options: { projectId?: string } = {}) {
+    const chat = await createChat(options);
+
+    if (!chat || !chat.id) {
+      throw new Error('Failed to create chat');
+    }
+
+    if (chat.projectId) {
+      await navigateTo(`/projects/${chat.projectId}/chats/${chat.id}`);
+    } else {
+      await navigateTo(`/chats/${chat.id}`);
+    }
   }
 
   function chatsInProject(projectId: string) {

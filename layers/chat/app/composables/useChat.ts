@@ -6,17 +6,23 @@ export default function useChat(chatId: string) {
 
   const { data, execute, status } = useFetch<Message[]>(`/api/chats/${chatId}/messages`, {
     default: () => [],
-    immediate: false
+    immediate: false,
+    headers: useRequestHeaders(['cookie'])
   });
 
-  async function fetchMessages({ refresh = false }: { refresh?: boolean } = {}) {
+  async function fetchMessages({
+    refresh = false
+  }: {
+    refresh?: boolean;
+  } = {}) {
     const hasExistingMessages = messages.value.length > 1;
     const isRequestInProgress = status.value !== 'idle';
-    const shouldSkipDueToExistingMessages = !refresh && (hasExistingMessages || isRequestInProgress);
+    const shouldSkipDueToExistingState = !refresh && (hasExistingMessages || isRequestInProgress);
 
-    if (shouldSkipDueToExistingMessages || !chat.value) {
+    if (shouldSkipDueToExistingState || !chat.value) {
       return;
     }
+
     await execute();
     chat.value.messages = data.value;
   }
@@ -26,7 +32,10 @@ export default function useChat(chatId: string) {
 
     const updatedChat = await $fetch<Chat>(`/api/chats/${chatId}/title`, {
       method: 'POST',
-      body: { message }
+      headers: useRequestHeaders(['cookie']),
+      body: {
+        message
+      }
     });
     chat.value.title = updatedChat.title;
   }
@@ -35,7 +44,7 @@ export default function useChat(chatId: string) {
     if (!chat.value) return;
 
     if (messages.value.length === 0) {
-      await generateChatTitle(message);
+      generateChatTitle(message);
     }
 
     const optimisticUserMessage: Message = {
@@ -45,7 +54,6 @@ export default function useChat(chatId: string) {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
     messages.value.push(optimisticUserMessage);
 
     const userMessageIndex = messages.value.length - 1;
@@ -53,17 +61,19 @@ export default function useChat(chatId: string) {
     try {
       const newMessage = await $fetch<Message>(`/api/chats/${chatId}/messages`, {
         method: 'POST',
+        headers: useRequestHeaders(['cookie']),
         body: {
           content: message,
           role: 'user'
         }
       });
-
       messages.value[userMessageIndex] = newMessage;
     } catch (error) {
-      console.error('Error sending user message:', error);
-      messages.value.splice(userMessageIndex, 1); // Remove optimistic message on error
+      console.error('Error sending user message', error);
+      messages.value.splice(userMessageIndex, 1);
+      return;
     }
+
     messages.value.push({
       id: `streaming-message-${Date.now()}`,
       role: 'assistant',
@@ -71,13 +81,13 @@ export default function useChat(chatId: string) {
       createdAt: new Date(),
       updatedAt: new Date()
     });
-
-    const lastMessage = messages.value[messages.value.length - 1] as ChatMessage;
+    const lastMessage = messages.value[messages.value.length - 1] as Message;
 
     try {
       const response = await $fetch<ReadableStream>(`/api/chats/${chatId}/messages/stream`, {
         method: 'POST',
         responseType: 'stream',
+        headers: useRequestHeaders(['cookie']),
         body: {
           messages: messages.value
         }
@@ -86,10 +96,11 @@ export default function useChat(chatId: string) {
       const decodedStream = response.pipeThrough(new TextDecoderStream());
 
       const reader = decodedStream.getReader();
-      await reader.read().then(async function processText({ done, value }): Promise<void> {
+      await reader.read().then(function processText({ done, value }): Promise<void> | void {
         if (done) {
           return;
         }
+
         lastMessage.content += value;
         return reader.read().then(processText);
       });
@@ -113,6 +124,7 @@ export default function useChat(chatId: string) {
     try {
       const updatedChat = await $fetch<Chat>(`/api/chats/${chatId}`, {
         method: 'PUT',
+        headers: useRequestHeaders(['cookie']),
         body: {
           projectId
         }
